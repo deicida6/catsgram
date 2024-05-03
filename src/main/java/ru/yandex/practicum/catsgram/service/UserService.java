@@ -1,6 +1,7 @@
 package ru.yandex.practicum.catsgram.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 import ru.yandex.practicum.catsgram.exception.ConditionsNotMetException;
 import ru.yandex.practicum.catsgram.exception.DuplicatedDataException;
 import ru.yandex.practicum.catsgram.exception.NotFoundException;
@@ -10,6 +11,7 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -17,6 +19,12 @@ public class UserService {
 
     public Collection<User> findAll() {
         return users.values();
+    }
+
+    public Optional<User> findById(@PathVariable int userId) {
+        return users.values().stream()
+                .filter(x -> x.getId() == userId)
+                .findFirst();
     }
 
     public User create(User user) {

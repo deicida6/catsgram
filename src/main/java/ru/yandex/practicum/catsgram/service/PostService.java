@@ -1,14 +1,13 @@
 package ru.yandex.practicum.catsgram.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 import ru.yandex.practicum.catsgram.exception.ConditionsNotMetException;
 import ru.yandex.practicum.catsgram.exception.NotFoundException;
 import ru.yandex.practicum.catsgram.model.Post;
 
 import java.time.Instant;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 // Указываем, что класс PostService - является бином и его
 // нужно добавить в контекст приложения
@@ -16,8 +15,26 @@ import java.util.Map;
 public class PostService {
     private final Map<Long, Post> posts = new HashMap<>();
 
-    public Collection<Post> findAll() {
-        return posts.values();
+    public List<Post> findAll(String sort, int size, int from) {
+        List<Post> allPosts = new ArrayList<>(posts.values());
+        // сортировка по дате создания
+        if (sort.equals("asc")) {
+            allPosts.sort(Comparator.comparing(Post::getPostDate));
+        } else if (sort.equals("desc")) {
+            allPosts.sort(Comparator.comparing(Post::getPostDate).reversed());
+        }
+
+        // отбрасываем первые from постов и выбираем size постов
+        int startIndex = Math.min(from, allPosts.size());
+        int endIndex = Math.min(startIndex + size, allPosts.size());
+
+        return allPosts.subList(startIndex, endIndex);
+    }
+
+    public Optional<Post> findById(@PathVariable long postId) {
+        return posts.values().stream()
+                .filter(x -> x.getId() == postId)
+                .findFirst();
     }
 
     public Post create(Post post) {
