@@ -23,7 +23,7 @@ public class PostController {
             @RequestParam (required = false) Integer size,
             @RequestParam (required = false) Integer from
             ) {
-        if (sort != null && (sort.equals("asc") || sort.equals("desc"))
+        if (sort != null && (sort.equals("asc") || sort.equals("desc") && sort != null)
                 && from != null && from > 0 && size != null && size > 0) {
             return postService.findAll(sort,size,(from - 1) * size);
         } else {
